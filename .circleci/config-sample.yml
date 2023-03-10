@@ -44,6 +44,9 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
+            cd frontend
+            npm install
+            npm run build
             exit 1
       - save_cache:
           paths: [frontend/node_modules]
@@ -243,7 +246,7 @@ jobs:
             # your code here
       # Here's where you will add some code to rollback on failure  
 
-cleanup:
+  cleanup:
     docker:
       # Docker image here
     steps:
@@ -261,7 +264,7 @@ cleanup:
             then
               # your code here
             fi
-            
+      
 
 workflows:
   default:
