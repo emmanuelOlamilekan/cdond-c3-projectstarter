@@ -31,8 +31,7 @@ jobs:
             # Your code here
             cd frontend
             npm install
-            npm run build
-            
+            npm run build   
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -54,8 +53,7 @@ jobs:
              # Your code here
              cd backend
              npm install
-             npm run build
-             
+             npm run build       
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -100,7 +98,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-         keys: [backend-build]
+         keys: [frontend-build]
       - run :
           name: Front end Vulnerability scan checkout
           command: |
@@ -121,7 +119,7 @@ jobs:
           command: |
               cd backend
               npm install
-              # npm audit fix --audit-level=critical  --force
+              npm audit fix --audit-level=critical  --force
               npm audit --audit-level=critical
       - slack/notify:
           event: fail
