@@ -155,7 +155,7 @@ jobs:
            echo "[all]" > inventory
            aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Project,Values=udapeople"   \ß
+            --filters "Name=tag:Project,Values=udapeople" \
             --output text >> inventory.txt
       - destroy-environment  
       - persist_to_workspace:
