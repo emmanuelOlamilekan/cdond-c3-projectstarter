@@ -9,6 +9,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -28,6 +35,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
       - restore_cache:
           keys: [backend-build]
       - run:
@@ -47,6 +61,13 @@ jobs:
       - image: circleci/node:13.8.0  
     steps:
        - checkout
+       - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+       - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
        - restore_cache:
           keys: [backend-build]
        - run : 
@@ -61,6 +82,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
        - checkout
+       - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+       - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
        - restore_cache :
           keys: [backend-build]
        - run : 
@@ -75,6 +103,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
       - restore_cache:
          keys: [backend-build]
       - run :
@@ -91,6 +126,13 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
       - restore_cache:
          keys: [backend-build]
       - run: 
