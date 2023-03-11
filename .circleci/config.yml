@@ -13,9 +13,6 @@ jobs:
           event: fail
           mentions: '@EngineeringTeam'
           template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -39,9 +36,6 @@ jobs:
           event: fail
           mentions: '@EngineeringTeam'
           template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
       - restore_cache:
           keys: [backend-build]
       - run:
@@ -60,14 +54,7 @@ jobs:
     docker:
       - image: circleci/node:13.8.0  
     steps:
-       - checkout
-       - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
-       - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
+       - checkout 
        - restore_cache:
           keys: [backend-build]
        - run : 
@@ -76,19 +63,14 @@ jobs:
                 cd frontend
                 npm install
                 npm run test
-
+       - slack/notify:
+          event: fail
+          template: basic_fail_1
    test-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
        - checkout
-       - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
-       - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
        - restore_cache :
           keys: [backend-build]
        - run : 
@@ -97,19 +79,15 @@ jobs:
                   cd backend
                   npm install
                   npm run test
+       - slack/notify:
+          event: fail
+          template: basic_fail_1           
 
    scan-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
       - restore_cache:
          keys: [backend-build]
       - run :
@@ -117,7 +95,7 @@ jobs:
           command: |
               cd frontend
               npm install
-              npm audit fix --audit-level=critical  --force
+              #npm audit fix --audit-level=critical  --force
               npm audit --audit-level=critical
              
 
@@ -126,13 +104,6 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
       - restore_cache:
          keys: [backend-build]
       - run: 
@@ -140,12 +111,12 @@ jobs:
           command: |
               cd backend
               npm install
-              npm audit fix --audit-level=critical  --force
+              # npm audit fix --audit-level=critical  --force
               npm audit --audit-level=critical
-              
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here           
+      - slack/notify:
+          event: fail
+          template: basic_fail_1        
+            
 
    notify:
     docker:
