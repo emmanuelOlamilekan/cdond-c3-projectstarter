@@ -203,10 +203,6 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - slack/notify:
-          event: fail
-          mentions: '@EngineeringTeam'
-          template: basic_fail_1
       - restore_cache:
           keys: [frontend-build]
       - run:
