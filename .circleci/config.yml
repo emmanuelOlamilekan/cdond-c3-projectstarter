@@ -198,11 +198,17 @@ jobs:
                  curl https://kvdb.io/97QsLbgGJHNFFfzHTJ3cD/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
              fi  
 
-   deploy-frontend:
+   build-frontend-test:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Build front-end
           command: |
@@ -210,6 +216,10 @@ jobs:
             cd frontend
             npm install
             npm run build   
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+   
    
    deploy-frontend-old:
     docker:
@@ -254,6 +264,6 @@ jobs:
 workflows:
   default:
     jobs: 
-      - build-frontend
+      - build-frontend-test
      
            
