@@ -240,6 +240,7 @@ jobs:
 workflows:
   default:
     jobs: 
+      - build-frontend
       - run-migrations 
       #- deploy-frontend 
            
