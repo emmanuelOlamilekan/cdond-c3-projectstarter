@@ -164,7 +164,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"] 
-     
+      - attach_workspace:
+          at: .circleci/ansible/inventory.txt
       - run:
           name: Install Ansible
           command: |
@@ -178,5 +179,27 @@ jobs:
 workflows:
   default:
     jobs: 
-      - configure-infrastructure
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+            - "build-frontend"
+      - test-backend:
+          requires:
+            - "build-backend"
+      - scan-frontend :
+          requires:
+            - "build-frontend"
+      - scan-backend :
+          requires:
+            - "build-backend"
+      - deploy-infrastructure :
+           requires:
+             - "test-frontend"
+             - "test-backend"
+             - "scan-frontend"
+             - "scan-backend"
+      - configure-infrastructure:
+           requires:
+             - "deploy-infrastructure"
            
