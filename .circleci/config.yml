@@ -197,29 +197,6 @@ jobs:
                  curl https://kvdb.io/97QsLbgGJHNFFfzHTJ3cD/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
              fi  
 
-   build-migration:
-      docker:
-        - image: circleci/node:13.8.0
-      steps:
-        - checkout
-        - slack/notify:
-            event: fail
-            mentions: '@EngineeringTeam'
-            template: basic_fail_1
-        - restore_cache:
-            keys: [frontend-build]
-        - run:
-            name: Build front-end
-            command: |
-              # Your code here
-              cd backend
-              npm install
-              npm run migrations > migrations_dump.txt 
-        - save_cache:
-            paths: [frontend/node_modules]
-            key: frontend-build
-                
-
    deploy-frontend:
     docker:
      - image: amazon/aws-cli
@@ -255,14 +232,13 @@ jobs:
             rm -r package-lock.json
             npm install
             npm run build   
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+           # tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+           # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       # Here's where you will add some code to rollback on failure      
-
-                             
+                       
 workflows:
   default:
     jobs: 
-      - run-migrations
+      - deploy-frontend
      
            
