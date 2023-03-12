@@ -237,7 +237,7 @@ jobs:
           name: testing command
           command: |
             yum install -y tar gzip
-            sudo apt install npm
+            sudo yum install nodejs
             npm -v
 
 workflows:
