@@ -151,6 +151,12 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Project,Values=udapeople" \
             --output text >> ./.circleci/ansible/inventory.txt
+            
+           aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Project,Values=udapeople" \
+            --output text
+            
       - destroy-environment  
       - persist_to_workspace:
           root: ~/
@@ -196,8 +202,10 @@ workflows:
             - "build-backend"
       - deploy-infrastructure :
            requires:
-             - "build-backend"
-             - "build-frontend"
+             - "test-frontend"
+             - "test-backend"
+             - "scan-frontend"
+             - "scan-backend"
       - configure-infrastructure:
            requires:
              - "deploy-infrastructure"
