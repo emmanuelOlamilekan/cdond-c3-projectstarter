@@ -237,8 +237,9 @@ jobs:
           name: testing command
           command: |
             yum install -y tar gzip
-            npm install
-                  
+            sudo apt install npm
+            npm -v
+
 workflows:
   default:
     jobs: 
