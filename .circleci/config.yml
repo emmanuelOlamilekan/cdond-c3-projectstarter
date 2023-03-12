@@ -254,6 +254,6 @@ jobs:
 workflows:
   default:
     jobs: 
-      - deploy-frontend
+      - build-frontend
      
            
