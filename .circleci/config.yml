@@ -236,9 +236,9 @@ jobs:
        - run : 
           name: testing command
           command: |
-            curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+            curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
             #yum install -y tar gzip
-            yum install nodejs
+            yum -y install nodejs
             npm -v
 
 workflows:
