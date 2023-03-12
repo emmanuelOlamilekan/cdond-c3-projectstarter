@@ -200,6 +200,19 @@ jobs:
 
    deploy-frontend:
     docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: Build front-end
+          command: |
+            # Your code here
+            cd frontend
+            npm install
+            npm run build   
+   
+   deploy-frontend-old:
+    docker:
      - image: amazon/aws-cli
     steps:
       - checkout
