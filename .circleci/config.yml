@@ -197,7 +197,7 @@ jobs:
                  curl https://kvdb.io/97QsLbgGJHNFFfzHTJ3cD/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
              fi  
 
-    run-migrations-build:
+   build-migration:
       docker:
         - image: circleci/node:13.8.0
       steps:
@@ -263,6 +263,6 @@ jobs:
 workflows:
   default:
     jobs: 
-      - run-migrations-build
-      #- deploy-frontend 
+      - build-migration
+     
            
