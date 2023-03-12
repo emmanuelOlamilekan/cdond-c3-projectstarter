@@ -201,19 +201,16 @@ jobs:
      - image: amazon/aws-cli
     steps:
       - checkout
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
       - run:
           name: Install dependencies
           command: |
-            sudo yum search tar
-            sudo yum update
-            sudo yum install tar
             yum install -y tar gzip
             curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
             yum -y install nodejs
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt      
       - run:
           name: Get backend url
           command: |
