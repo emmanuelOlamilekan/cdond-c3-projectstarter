@@ -164,8 +164,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"] 
-      - attach_workspace:
-          at: .circleci/ansible/inventory.txt
+     
       - run:
           name: Install Ansible
           command: |
@@ -175,10 +174,9 @@ jobs:
           command: |
             cd .circleci/ansible
             cat inventory.txt
-            # ansible-playbook -i inventory.txt configure-server.yml
+            #ansible-playbook -i inventory.txt configure-server.yml
 workflows:
   default:
     jobs: 
-     
       - configure-infrastructure
-         
+           
