@@ -305,14 +305,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip
-            curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-            yum -y install nodejs
+           apk add --update ansible
+           # yum install -y tar gzip
+           # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
+           # yum -y install nodejs
       - run:
           name: Deploy backend
           command: |
             cd backend
-            npm i
+            npm install
             npm run build
             cd ..
             # Zip the directory
