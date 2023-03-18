@@ -305,7 +305,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-           apk add --update ansible
+           sudo apt-get install python -y
            # yum install -y tar gzip
            # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
            # yum -y install nodejs
