@@ -230,6 +230,7 @@ jobs:
             curl https://dl.winehq.org/wine/source/1.9/wine-1.9.19.tar.bz2
             sudo tar xzvf wine-1.9.19.tar.bz2
             cd wine-1.9.19
+            ls
             # apt install gzip
             #  sudo install tar gzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
