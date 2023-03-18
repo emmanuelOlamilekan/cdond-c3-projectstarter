@@ -34,6 +34,7 @@ commands:
                 npm install
                 npm run migration:revert
               fi  
+
 jobs:
    build-frontend:
     docker:
@@ -125,6 +126,7 @@ jobs:
               npm install
               npm audit fix --audit-level=critical  --force
               npm audit --audit-level=critical           
+  
    scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -298,19 +300,57 @@ jobs:
      - image: circleci/node:13.8.0
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"] 
+      - attach_workspace:
+          at: ~/    
+      - run:
+          name: Install dependencies
+          command: |
+            yum install -y tar gzip
+            curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
+            yum -y install nodejs
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz 
+            cd .circleci/ansible
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
+            # your code here
+   
+   deploy-backend-test:
+    docker:
+     - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"] 
+      - attach_workspace:
+          at: ~/    
+      - run:
+          name: Install dependencies
+          command: |
+            # yum install -y tar gzip
+            # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
+            # yum -y install nodejs
       - restore_cache:
           keys: [backend-build]
       - run:
           name: Deploy backend
           command: |
             cd backend
-            npm install
+            npm i
             npm run build
-            #cd ..
+            # cd ..
             # Zip the directory
-            #tar -C backend -czvf artifact.tar.gz 
-            #cd .circleci/ansible
-            #ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
+            # tar -C backend -czvf artifact.tar.gz 
+            # cd .circleci/ansible
+            # ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
 
      # - destroy-environment:
@@ -388,7 +428,5 @@ jobs:
 workflows:
   default:
     jobs: 
-      - deploy-backend
-     
-           
+      - deploy-backend-test
      
