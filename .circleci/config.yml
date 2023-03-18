@@ -298,17 +298,6 @@ jobs:
      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"] 
-      - attach_workspace:
-          at: ~/    
-      - run:
-          name: Install dependencies
-          command: |
-           sudo apt-get install python -y
-           # yum install -y tar gzip
-           # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-           # yum -y install nodejs
       - run:
           name: Deploy backend
           command: |
