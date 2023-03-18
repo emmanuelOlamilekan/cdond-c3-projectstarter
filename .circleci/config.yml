@@ -227,11 +227,12 @@ jobs:
       - run :
           name: Install dependencies
           command: |
-            apt install gzip
-            # sudo yum install -y tar gzip
+            # apt install gzip
+            #  sudo install tar gzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -241,6 +242,14 @@ jobs:
             cd frontend
             npm install
             npm run build   
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build   
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive     
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -248,7 +257,7 @@ jobs:
    
    deploy-frontend:
     docker:
-     - image: amazon/aws-cli
+     - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -256,10 +265,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip
+            # apt install gzip
+            #  sudo install tar gzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - node/install:
           install-yarn: true
           node-version: '13.8.0'
+      - run: node --version    
       - run:
           name: Deploy frontend objects
           command: |
@@ -385,7 +399,6 @@ jobs:
             --tags project=udapeople
       # Here's where you will add some code to rollback on failure  
 
-
 workflows:
   default:
     jobs: 
@@ -428,3 +441,4 @@ workflows:
       #     requires:
       #       - "smoke-test"
            
+     
