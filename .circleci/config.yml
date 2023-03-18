@@ -346,8 +346,10 @@ jobs:
             cd backend
             npm i
             npm run build
+            echo "AFTER BUILD"
             ls
             cd ..
+              echo "AFTER MOVING BACK"
             ls
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz 
