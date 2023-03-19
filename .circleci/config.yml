@@ -336,8 +336,8 @@ jobs:
             # Zip the directory
             tar -czf artifact.tar.gz backend   
 
-            rmdr backend
-            
+            rmdir backend
+
              echo "AFTER Archiving"
             ls
 
