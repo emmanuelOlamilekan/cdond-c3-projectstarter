@@ -27,9 +27,8 @@
     production : yes
     state : present
 
-
-- name: Extract foo.tgz into /var/lib/foo
-  ansible.builtin.unarchive:
+- name: Extract artifact.tar.gz 
+  unarchive:
     src: artifact.tar.gz
     dest: ~/     
 
