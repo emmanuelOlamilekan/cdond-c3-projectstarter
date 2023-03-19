@@ -27,15 +27,11 @@
     production : yes
     state : present
 
-- name : Create Directory
-  file :
-     path : ~/web
-     state : directory
 
 - name: Extract foo.tgz into /var/lib/foo
   ansible.builtin.unarchive:
-    src: foo.tgz
-    dest: ~/artifact.tar.gz     
+    src: artifact.tar.gz
+    dest: ~/     
 
 - name: Executing node    
   shell: |
