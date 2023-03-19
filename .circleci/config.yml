@@ -334,7 +334,7 @@ jobs:
             echo "AFTER MOVING BACK"
             ls
             # Zip the directory
-            tar -czvf artifact.tar.gz backend   
+            tar -czf artifact.tar.gz backend   
             cd .circleci/ansible
            # ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
