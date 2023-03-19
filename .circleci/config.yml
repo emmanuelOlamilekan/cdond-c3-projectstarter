@@ -338,6 +338,11 @@ jobs:
 
              echo "AFTER Archiving"
             ls
+
+            tar xzf artifact.tar.gz
+
+            echo "AFTER Unarchiving"
+            ls
             cd .circleci/ansible
            # ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
