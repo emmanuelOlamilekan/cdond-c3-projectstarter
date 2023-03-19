@@ -337,7 +337,7 @@ jobs:
             tar -czf artifact.tar.gz backend   
 
             rm -r backend
-            rmdir backend
+            
              echo "AFTER Archiving"
             ls
 
