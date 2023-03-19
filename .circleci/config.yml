@@ -300,7 +300,8 @@ jobs:
      - image: circleci/node:13.8.0
     steps:
       - checkout
-     
+      - add_ssh_keys:
+          fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"]
       - attach_workspace:
           at: ~/    
       - run:
@@ -331,8 +332,7 @@ jobs:
             # Zip the directory
             tar -czvf artifact.tar.gz backend   
             cd .circleci/ansible
-            cat ~/project/.circleci/ansible/inventory.txt
-           # ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
 
       - destroy-environment:
