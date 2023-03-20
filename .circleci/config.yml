@@ -338,7 +338,7 @@ jobs:
    
    deploy-backend_test:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -347,13 +347,13 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # sudo apt-get install python -y
-            # sudo apt-get update
-            # sudo apt-get install ansible -y
+             sudo apt-get install python -y
+             sudo apt-get update
+             sudo apt-get install ansible -y
 
             # yum install -y tar gzip
-             apk add --update nodejs npm
-             apk add --update ansible
+           # apk add --update nodejs npm
+           #  apk add --update ansible
     
       - restore_cache:
           keys: [backend-build]
@@ -361,7 +361,7 @@ jobs:
           name: Deploy backend
           command: |
             cd backend
-           
+            
             cd ..
             # Zip the directory
             tar -czvf artifact.tar.gz backend
