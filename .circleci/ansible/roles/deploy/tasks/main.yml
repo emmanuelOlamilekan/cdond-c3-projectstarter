@@ -1,5 +1,8 @@
 ---
-
+- name: Extract artifact.tar.gz 
+  unarchive:
+    src: artifact.tar.gz
+    dest: ~/     
 
 - name: Executing node    
   shell: |
