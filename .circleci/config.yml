@@ -366,7 +366,7 @@ jobs:
             # Zip the directory
             tar -czvf artifact.tar.gz backend
             cd .circleci/ansible
-            ansible-playbook -i 35.153.18.163 deploy-backend.yml
+            ansible-playbook deploy-backend.yml
             # your code here
     
      # - destroy-environment:
