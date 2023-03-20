@@ -335,39 +335,6 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
-   
-   deploy-backend_test:
-    docker:
-      - image: node:13.8.0-alpine
-    steps:
-      - checkout
-     
-      - attach_workspace:
-          at: ~/   
-      - run:
-          name: Install dependencies
-          command: |
-             node -v
-             apk add --update ansible   
-             
-            # yum install -y tar gzip
-            # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-            # yum -y install nodejsb
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Deploy backend
-          command: |
-            cd backend
-             npm i
-             npm run build
-            cd ..
-            # Zip the directory
-            tar -czvf artifact.tar.gz backend
-            cd .circleci/ansible
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
-            # your code here
-   
      # - destroy-environment:
      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
      # - revert-migrations:
