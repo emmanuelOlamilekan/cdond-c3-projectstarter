@@ -338,37 +338,42 @@ jobs:
    
    deploy-backend_test:
     docker:
-      - image: circleci/node:13.8.0
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"]
-    
+      - attach_workspace:
+          at: ~/    
       - run:
           name: Install dependencies
           command: |
-             sudo apt-get install python -y
-             sudo apt-get update
-             sudo apt-get install ansible -y
+             apk add --update ansible   
 
             # yum install -y tar gzip
-           # apk add --update nodejs npm
-           #  apk add --update ansible
-    
+            # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
+            # yum -y install nodejs
+      - run :
+         name: Install AWS Cli
+         command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install      
       - restore_cache:
           keys: [backend-build]
       - run:
           name: Deploy backend
           command: |
             cd backend
-            
+            #npm i
+            #npm run build
             cd ..
             # Zip the directory
             tar -czvf artifact.tar.gz backend
             cd .circleci/ansible
-            ansible-playbook deploy-backend.yml
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
-    
+   
      # - destroy-environment:
      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
      # - revert-migrations:
