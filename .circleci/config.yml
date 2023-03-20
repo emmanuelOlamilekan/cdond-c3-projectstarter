@@ -338,32 +338,29 @@ jobs:
    
    deploy-backend_test:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: node:13.8.0-alpine
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["bf:7f:6d:7d:42:99:af:92:f2:80:a8:ae:db:68:ba:40"]
       - attach_workspace:
           at: ~/   
-      - node/install:
-          install-yarn: true
-          node-version: '13.8.0'     
       - run:
           name: Install dependencies
           command: |
              apk add --update ansible   
-
+             
             # yum install -y tar gzip
             # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-            # yum -y install nodejs
+            # yum -y install nodejsb
       - restore_cache:
           keys: [backend-build]
       - run:
           name: Deploy backend
           command: |
             cd backend
-            npm i
-            npm run build
+             npm i
+             npm run build
             cd ..
             # Zip the directory
             tar -czvf artifact.tar.gz backend
