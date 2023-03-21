@@ -334,6 +334,7 @@ jobs:
             cd ..
             # Zip the directory
             tar -czvf artifact.tar.gz backend
+            mv 
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
@@ -350,9 +351,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip
-            curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-            yum -y install nodejs 
+            apk add --update curl
+            apk add --no-cache aws-cli
       - run:
           name: Get backend url
           command: |
