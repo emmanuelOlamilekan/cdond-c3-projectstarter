@@ -334,7 +334,6 @@ jobs:
             cd ..
             # Zip the directory
             tar -czvf artifact.tar.gz backend
-            mv 
             cd .circleci/ansible
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
             # your code here
