@@ -22,12 +22,15 @@
 
 - name: install NVM    
   shell: |
-       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash 
-      
-- name: install nodejs    
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash 
+       
+- name: change Source    
   shell: |
        source ~/.bashrc
-       nvm install v16.8.0       
+
+- name: install nodejs    
+  shell: |
+       nvm install v16.8.0                          
 
 - name: Install PM2
   become : yes
