@@ -18,7 +18,6 @@
   become : yes
   apt:
     name : ["nodejs=13.8.0","npm"]
-    state : latest
     update_cache : yes
 
 - name: Install PM2
