@@ -20,11 +20,16 @@
     name : npm
     update_cache : yes
 
-- name: Executing node    
+- name: install NVM    
   shell: |
-       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash 
        source ~/.bashrc
        nvm install v16.8.0
+
+- name: install nodejs    
+  shell: |
+       source ~/.bashrc
+       nvm install v16.8.0       
 
 - name: Install PM2
   become : yes
