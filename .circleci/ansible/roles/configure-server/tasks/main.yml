@@ -23,7 +23,7 @@
 - name :   Install Node JS 
   become : yes
   apt:
-    name : nodejs=13.8
+    name : nodejs=v13.8
     update_cache : yes    
 
 - name: Install PM2
