@@ -14,11 +14,17 @@
   apt:
     autoremove: yes
 
-- name :   Install dependencies 
+- name :   Install NPM 
   become : yes
   apt:
-    name : ["nodejs=13.8","npm"]
+    name : npm
     update_cache : yes
+
+- name :   Install Node JS 
+  become : yes
+  apt:
+    name : nodejs=13.8
+    update_cache : yes    
 
 - name: Install PM2
   become : yes
