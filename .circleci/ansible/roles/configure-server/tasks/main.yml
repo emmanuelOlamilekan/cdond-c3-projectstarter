@@ -20,11 +20,11 @@
     name : npm
     update_cache : yes
 
-- name :   Install Node JS 
-  become : yes
-  apt:
-    name : nodejs=v13.8
-    update_cache : yes    
+- name: Executing node    
+  shell: |
+       curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
+       sudo apt-get install -y nodejs
+
 
 - name: Install PM2
   become : yes
