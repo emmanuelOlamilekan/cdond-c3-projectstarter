@@ -24,10 +24,6 @@
   shell: |
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash 
        
-- name: change Source    
-  shell: |
-       source ~/.bashrc
-
 - name: install nodejs    
   shell: |
        nvm install v16.8.0                          
