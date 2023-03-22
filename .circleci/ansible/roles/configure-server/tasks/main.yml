@@ -22,9 +22,8 @@
 
 - name: Executing node    
   shell: |
-       curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
-       sudo apt-get install -y nodejs
-
+       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+       nvm install v16.8.0
 
 - name: Install PM2
   become : yes
