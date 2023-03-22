@@ -353,8 +353,10 @@ jobs:
             apk --no-cache add python3 py3-pip
             pip3 install --upgrade pip
             pip3 install --no-cache-dir awscli
+    
+
       - run:
-          name: Get backend url
+          name: Backend smoke test.
           command: |
             export BACKEND_IP=$( \
                aws ec2 describe-instances \
@@ -362,10 +364,6 @@ jobs:
               --output text
             )
             export API_URL="http://${BACKEND_IP}:3030"
-
-      - run:
-          name: Backend smoke test.
-          command: |
             echo ${API_URL}
             if curl "${API_URL}/api/status" | grep "ok"
             then
