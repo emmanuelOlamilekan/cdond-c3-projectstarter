@@ -21,7 +21,7 @@
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
 - name: source bashrc
-  shell: source /home/username/.bashrc && nvm install v16.8.0
+  shell: source ~/.bashrc && nvm install v16.8.0
   args:
      executable: /bin/bash
 
