@@ -28,7 +28,6 @@
     state: present
     allow_downgrade: yes
    
-
 - name: "Install PM2"
   become : yes
   npm :
