@@ -1,6 +1,6 @@
 ---
 
-- name: update apt packages
+- name: "update apt packages"
   become: yes
   apt:
     update_cache: yes
@@ -24,7 +24,7 @@
   sudo: no
   shell: ./home/username/.bashrc && nvm install v16.8.0
 
-- name: "Install PM"2
+- name: "Install PM2"
   become : yes
   npm :
     name: pm2
