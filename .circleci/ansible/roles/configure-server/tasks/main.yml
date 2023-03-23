@@ -22,10 +22,16 @@
     state : latest
     update_cache : yes
 
-- name: Install the version '16.8.0' of package "nodejs" and allow potential downgrades
-  become : yes
-  apt:
-    name: nodejs=16.8.0
+- name: Install Chocolatey Package
+  shell: |
+      ansible-galaxy collection install chocolatey.chocolatey
+
+- name: install and pin nodejs at 16.8.0
+  win_chocolatey:
+    name: nodejs
+    version: 16.8.0
+    pinned: yes
+    state: present
    
 - name: "Install PM2"
   become : yes
