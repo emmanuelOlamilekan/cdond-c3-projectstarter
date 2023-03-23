@@ -20,9 +20,11 @@
   shell: |
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-- name: "install npm"
-  sudo: no
-  shell: ./home/username/.bashrc && nvm install v16.8.0
+- name: source bashrc
+  sudo: no   
+  shell: source /home/username/.bashrc && nvm install v16.8.0
+  args:
+     executable: /bin/bash
 
 - name: "Install PM2"
   become : yes
