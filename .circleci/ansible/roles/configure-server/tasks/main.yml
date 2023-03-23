@@ -22,10 +22,6 @@
     state : latest
     update_cache : yes
 
-- name: Install Chocolatey Package
-  shell: |
-      ansible-galaxy collection install chocolatey.chocolatey
-
 - name: install and pin nodejs at 16.8.0
   win_chocolatey:
     name: nodejs
