@@ -1,6 +1,6 @@
 ---
 
-- name: "update apt packages"
+- name: update apt packages
   become: yes
   apt:
     update_cache: yes
@@ -10,20 +10,24 @@
   apt:
     upgrade: yes
     
-- name: remove dependencies that are no longer required
-  become: yes
+- name :  remove dependencies that are no longer required
+  become: yes  
   apt:
     autoremove: yes
 
+- name :   Install dependencies 
+  become : yes
+  apt:
+    name : "npm"
+    state : latest
+    update_cache : yes
 
-- name: "install NVM"
-  shell: |
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-
-- name: source bashrc
-  shell: source ~/.bashrc && nvm install v16.8.0
-  args:
-     executable: /bin/bash
+- name: Install the version '16.8.0' of package "nginx" and allow potential downgrades
+  ansible.builtin.apt:
+    name: nodejs=16.8.0
+    state: present
+    allow_downgrade: yes
+   
 
 - name: "Install PM2"
   become : yes
