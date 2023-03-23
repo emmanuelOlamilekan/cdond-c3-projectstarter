@@ -10,24 +10,19 @@
     upgrade: yes
     
 - name :  remove dependencies that are no longer required
-  become: yes  
+  become: yes
   apt:
     autoremove: yes
 
-- name :   Install NPM 
-  become : yes
-  apt:
-    name : npm
-    update_cache : yes
-
-- name: install NVM    
+    
+- name: install NVM
   shell: |
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-- name: source bashrc
-  sudo: no   
-  shell: ./home/username/.bashrc && nvm install v16.8.0   
-                              
+- name: install npm
+  sudo: no
+  shell: ./home/username/.bashrc && nvm install v16.8.0
+
 - name: Install PM2
   become : yes
   npm :
@@ -35,5 +30,3 @@
     global : yes
     production : yes
     state : present
-
-    
