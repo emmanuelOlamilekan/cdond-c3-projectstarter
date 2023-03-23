@@ -22,7 +22,7 @@
     state : latest
     update_cache : yes
 
-- name: source bashrc
+- name: "Source bashrc"
   sudo: no
   shell: |
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
