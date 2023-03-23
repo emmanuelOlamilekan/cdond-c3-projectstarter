@@ -1,4 +1,5 @@
 ---
+
 - name: update apt packages
   become: yes
   apt:
@@ -9,21 +10,21 @@
   apt:
     upgrade: yes
     
-- name:remove dependencies that are no longer required
+- name: remove dependencies that are no longer required
   become: yes
   apt:
     autoremove: yes
 
 
-- name: install NVM
+- name: "install NVM"
   shell: |
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-- name: install npm
+- name: "install npm"
   sudo: no
   shell: ./home/username/.bashrc && nvm install v16.8.0
 
-- name: Install PM2
+- name: "Install PM"2
   become : yes
   npm :
     name: pm2
