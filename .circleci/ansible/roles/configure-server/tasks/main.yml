@@ -23,10 +23,10 @@
     update_cache : yes
 
 - name: source bashrc
- sudo: no
- shell: |
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-  . /home/username/.bashrc && nvm install v16.14.1
+  sudo: no
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    . /home/username/.bashrc && nvm install v16.14.1
    
 - name: "Install PM2"
   become : yes
