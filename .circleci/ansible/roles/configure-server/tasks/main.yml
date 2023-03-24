@@ -23,7 +23,7 @@
     update_cache : yes
 
 - name: Install the version '16.8.0' of package "nodejs" and allow potential downgrades
-  apt:
+  ansible.builtin.apt :
     name: nodejs=v16.8.0
     state: present
     allow_downgrade: yes
