@@ -22,10 +22,11 @@
     state : latest
     update_cache : yes
 
-- name: "Source bashrc"
-  shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-    . /home/username/.bashrc && nvm install v16.14.1
+- name: Install the version '1.18.0' of package "nginx" and allow potential downgrades
+  apt:
+    name: nodejs=v16.8.0
+    state: present
+    allow_downgrade: yes
    
 - name: "Install PM2"
   become : yes
