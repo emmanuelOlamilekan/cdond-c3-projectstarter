@@ -171,6 +171,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
              aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \ 
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
              cat .circleci/ansible/inventory.txt  
@@ -195,6 +196,12 @@ jobs:
           name: Install Ansible
           command: |
               apk add --update ansible   
+      - run:
+          name: Install aws cli 
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Configure server
           command: |
@@ -276,25 +283,25 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       - run:
-          name: Deploy frontend objects
-          command: |
-            cd frontend
-            npm install
-            npm run build   
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - run:
           name: Get backend url
           command: |
             export BACKEND_IP=$( \
                aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \ 
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text
             )
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env    
+            # echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build   
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive      
+            
       - destroy-environment:
            workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations :
@@ -315,30 +322,34 @@ jobs:
             sudo apt-get install python -y
             sudo apt-get update
             sudo apt-get install ansible -y
-
-            # yum install -y tar gzip
-            # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-            # yum -y install nodejs
       - run :
          name: Install AWS Cli
          command: |
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            sudo ./aws/install      
+            sudo ./aws/install
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Deploy backend
+          name: Package Backend
           command: |
             cd backend
             npm i
             npm run build
-            cd ..
             # Zip the directory
-            tar -czvf artifact.tar.gz backend
-            cd .circleci/ansible
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt deploy-backend.yml
-            # your code here
+            tar -czvf artifact.tar.gz dist/* package*
+            mv ~/project/backend/artifact.tar.gz ~/project/.circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+
+             export TYPEORM_MIGRATIONS_DIR=./migrations
+             export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+             export TYPEORM_MIGRATIONS=./migrations/*.ts
+
+             cd ~/project/.circleci/ansible
+             ansible-playbook -i inventory.txt deploy-backend.yml
+            
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
@@ -360,7 +371,8 @@ jobs:
           name: Backend smoke test.
           command: |
             export BACKEND_IP=$( \
-               aws ec2 describe-instances \
+              aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \ 
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text
             )
