@@ -24,9 +24,8 @@
 
 - name: Install the version '16.8.0' of package "nodejs" and allow potential downgrades
   ansible.builtin.apt :
-    name: nodejs=v16.8.0
+    name: nodejs
     state: present
-    allow_downgrade: yes
    
 - name: "Install PM2"
   become : yes
