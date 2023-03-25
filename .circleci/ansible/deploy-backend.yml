@@ -2,7 +2,6 @@
 - name: "configuration play." 
   hosts: web
   user: ubuntu
-  become_user: root
   gather_facts: false
 
   vars:
@@ -16,7 +15,6 @@
         timeout: 600
 
     - name: "install python for Ansible."
-      become: true
       apt:
         name : python3
         update_cache : yes  
