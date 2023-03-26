@@ -170,7 +170,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
              aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-<IDENTIFIER>" \ 
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \ 
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
              cat .circleci/ansible/inventory.txt 
@@ -280,7 +280,7 @@ jobs:
           command: |
             export BACKEND_IP=$( \
                aws ec2 describe-instances \
-               --filters "Name=tag:Name,Values=backend-<IDENTIFIER>" \
+               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \ 
                --query 'Reservations[*].Instances[*].PublicIpAddress' \
                --output text
             )
@@ -366,7 +366,7 @@ jobs:
           command: |
             export BACKEND_IP=$( \
               aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-<IDENTIFIER>" \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \ 
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text
             )
