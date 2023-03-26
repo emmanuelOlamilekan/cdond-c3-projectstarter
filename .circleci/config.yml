@@ -155,7 +155,7 @@ jobs:
           command: |
              export PipeLineID= ${CIRCLE_WORKFLOW_ID:0:7}
              aws ec2 describe-instances \
-              --filters "Name=tag:Name","Values=${PipeLineID}" \ 
+              --filters "Name=tag:Name","Values=kjcxbbbjbkbckc" \ 
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
              cat .circleci/ansible/inventory.txt 
