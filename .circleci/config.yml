@@ -431,7 +431,7 @@ jobs:
 
    cleanup:
     docker:
-      - image: circleci/node:13.8.0
+       - image: cimg/base:stable
     steps:
       - checkout
       - run :
