@@ -342,7 +342,7 @@ jobs:
             apk --no-cache add python3 py3-pip
             pip3 install --upgrade pip
             pip3 install --no-cache-dir awscli
-    
+      - install_nodejs
       - run:
           name: Backend smoke test.
           command: |
@@ -386,6 +386,7 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
+      - install_nodejs      
       - run:
           name: Update cloudfront distribution
           command: |
@@ -394,6 +395,10 @@ jobs:
             --stack-name InitialStack \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}         
       # Here's where you will add some code to rollback on failure  
 
    cleanup:
