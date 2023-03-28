@@ -351,7 +351,6 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-      - checkout
       - run:
           name: Install dependencies
           command: |
@@ -359,21 +358,7 @@ jobs:
             curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
             yum -y install nodejs 
       - run:
-          name: Install dependencies
-          command: |
-            sudo apt-get install python -y
-            sudo apt-get update
-            sudo apt-get install ansible -y
-      - run:
-          name: Install dependencies
-          command: |
-            # apt install gzip
-            #  sudo install tar gzip
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Backend smoke test.
+          name: Get backend url
           command: |
             export BACKEND_IP=$( \
               aws ec2 describe-instances \
@@ -382,7 +367,10 @@ jobs:
               --output text
             )
             export API_URL="http://${BACKEND_IP}:3030"
-            echo ${API_URL}
+           
+      - run:
+          name: Backend smoke test.
+          command: |
             if curl "${API_URL}/api/status" | grep "ok"
             then
               return 0
@@ -396,7 +384,8 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              return 0
+              # Change this to 0 after the job fails
+              return 1
             else
               return 1
             fi
