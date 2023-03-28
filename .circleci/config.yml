@@ -411,24 +411,21 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-     
       - run:
           name: Backend smoke test.
           command: |
             if curl -s http://52.3.253.82:3030/api/status | grep "ok"
             then
-             return 0
+              return 0
             else
              return 1
             fi
       - run:
           name: Frontend smoke test.
           command: |
-          
             if curl -s http://52.3.253.82:3030/api/status | grep "ok"
             then
-              # Change this to 0 after the job fails
-              return 1
+              return 0
             else
               return 1
             fi
