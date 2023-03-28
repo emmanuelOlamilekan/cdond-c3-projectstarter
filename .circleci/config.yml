@@ -419,7 +419,7 @@ jobs:
             then
              return 0
             else
-             eturn 1
+             return 1
             fi
       - run:
           name: Frontend smoke test.
