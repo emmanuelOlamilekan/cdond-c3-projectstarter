@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@4.12.1
-  node: circleci/node@5.1.0
 
 commands:
   destroy-environment:
@@ -14,10 +13,9 @@ commands:
          name: "Destroy infrastructure"
          when: on_fail
          command: |
+          aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
           aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
           aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-          aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}/dist --recursive
-
   revert-migrations:
      description: Revert the last migration
      parameters:
@@ -35,23 +33,22 @@ commands:
                 npm install
                 npm run migration:revert
               fi  
-   
-  install_nodejs:
-    description: Install Node.js 13.8.0
-    steps:
-      - run:
-          name: Install Node.js 13.8.0
-          command: |
-            # Install Node.js LTS version as our base Node.js version
-            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-            sudo apt install -y nodejs
-
-            # Use n version manager to use Node.js v13.8.0
-            sudo npm install --global n
-            sudo n 13.8.0
 
 jobs:
-            
+  
+   build-test:
+     docker:
+      - image: cimg/node:13.8.0
+     steps:
+       - checkout
+       - run:
+          name: Build front-end
+          command: |
+            # Your code here
+            cd frontend
+            npm install
+            npm run build   
+          
    build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -226,16 +223,6 @@ jobs:
        - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run :
-         name: Install AWS Cli
-         command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - restore_cache:
-          keys: [backend-build] 
-      - revert-migrations :
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}        
       - run:
           name: Run migrations
           command: |
@@ -243,21 +230,50 @@ jobs:
             ls
             npm install
             # Run and save the migration output
-            npm run migrations > migrations_dump.txt
-            echo Hi
-            cat migrations_dump.txt
+            # npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to memstash
           command: |
              if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt 
              then
-                 curl https://kvdb.io/97QsLbgGJHNFFfzHTJ3cD/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+                 curl https://kvdb.io/97QsLbgGJHNFFfzHTJ3cD/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
              fi  
-      - destroy-environment:
-           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migrations :
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}       
 
+   build-frontend-test:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run :
+          name: Install dependencies
+          command: |
+            # apt install gzip
+            #  sudo install tar gzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Build front-end
+          command: |
+            # Your code here
+            cd frontend
+            npm install
+            npm run build   
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build   
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive     
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+   
    deploy-frontend:
     docker:
      - image: circleci/node:13.8.0
@@ -284,7 +300,7 @@ jobs:
             )
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            # echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
@@ -349,19 +365,18 @@ jobs:
 
    smoke-test:
     docker:
-     - image: cimg/base:stable
+      - image: python:3.7-alpine3.11
     steps:
-      - install_nodejs
       - run:
           name: Install dependencies
           command: |
-            # apt install gzip
-            #  sudo install tar gzip
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            apk add --update curl
+            apk --no-cache add python3 py3-pip
+            pip3 install --upgrade pip
+            pip3 install --no-cache-dir awscli
+    
       - run:
-          name: Get backend url
+          name: Backend smoke test.
           command: |
             export BACKEND_IP=$( \
               aws ec2 describe-instances \
@@ -370,10 +385,7 @@ jobs:
               --output text
             )
             export API_URL="http://${BACKEND_IP}:3030"
-           
-      - run:
-          name: Backend smoke test.
-          command: |
+            echo ${API_URL}
             if curl "${API_URL}/api/status" | grep "ok"
             then
               return 0
@@ -387,7 +399,6 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              # Change this to 0 after the job fails
               return 0
             else
               return 1
@@ -400,39 +411,43 @@ jobs:
    
    smoke-test-mock:
     docker:
-     - image: cimg/base:stable
+      - image: python:3.7-alpine3.11
     steps:
-      - install_nodejs
       - run:
           name: Install dependencies
           command: |
-            # apt install gzip
-            #  sudo install tar gzip
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            apk add --update curl
+            apk --no-cache add python3 py3-pip
+            pip3 install --upgrade pip
+            pip3 install --no-cache-dir awscli
+    
       - run:
           name: Backend smoke test.
           command: |
-            return 0
-            if curl -s http://52.3.253.82:3030/api/status | grep "ok"
+            
+            if curl http://52.3.253.82:3030/api/status | grep "ok"
             then
               return 0
             else
-             return 1
+              return 1
             fi
       - run:
           name: Frontend smoke test.
           command: |
+           
             if curl -s http://52.3.253.82:3030/api/status | grep "ok"
             then
               return 0
             else
               return 1
             fi
-     
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}      
       # Here's where you will add some code to rollback on failure  
    
+
    cloudfront-update:
     docker:
        - image: amazon/aws-cli
@@ -442,7 +457,6 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-      - install_nodejs      
       - run:
           name: Update cloudfront distribution
           command: |
@@ -451,11 +465,8 @@ jobs:
             --stack-name InitialStack \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}         
       # Here's where you will add some code to rollback on failure  
+
 
    cleanup:
     docker:
@@ -475,9 +486,10 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text) 
             echo Stack names: "${STACKS[@]}"  
       
+
 workflows:
   default:
     jobs: 
-      - smoke-test-mock
-      
+       - smoke-test-mock
+     
    
