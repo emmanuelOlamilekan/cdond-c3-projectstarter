@@ -437,9 +437,6 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-
-           echo $( aws cloudformation list-exports )
-            # your code here
             export OldWorkflowID= $( aws cloudformation list-exports \
              --query "Exports[?Name==\`Cloudfront-${CIRCLE_WORKFLOW_ID:0:7}\`].Value" \
              --no-paginate --output text )
@@ -454,7 +451,6 @@ jobs:
           command: |
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
-               # If yes empty the bucket associated with the frontend stack and delete the stacks
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
                 aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
                 aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
