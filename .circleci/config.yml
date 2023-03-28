@@ -234,7 +234,8 @@ jobs:
             sudo ./aws/install
       - restore_cache:
           keys: [backend-build] 
-      - revert-migrations        
+      - revert-migrations :
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}        
       - run:
           name: Run migrations
           command: |
