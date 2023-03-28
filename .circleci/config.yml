@@ -417,9 +417,9 @@ jobs:
           command: |
             if curl http://52.3.253.82:3030/api/status | grep "ok"
             then
-              return 0
+             return 0
             else
-              return 1
+             eturn 1
             fi
       - run:
           name: Frontend smoke test.
