@@ -35,6 +35,20 @@ commands:
                 npm run migration:revert
               fi  
 jobs:
+  
+   build-test:
+     docker:
+      - image: cimg/node:13.8.0
+     steps:
+       - checkout
+       - run:
+          name: Build front-end
+          command: |
+            # Your code here
+            cd frontend
+            npm install
+            npm run build   
+          
    build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -124,8 +138,9 @@ jobs:
               cd frontend
               npm install
               npm audit fix --audit-level=critical  --force
-              npm audit --audit-level=critical
-             
+              npm audit fix --force
+              npm audit --audit-level=critical           
+  
    scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -137,6 +152,7 @@ jobs:
               cd backend
               npm install
               npm audit fix --audit-level=critical  --force
+              npm audit fix --force
               npm audit --audit-level=critical
       - slack/notify:
           event: fail
@@ -170,7 +186,7 @@ jobs:
              aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
-             cat .circleci/ansible/inventory.txt  
+             cat .circleci/ansible/inventory.txt 
       - destroy-environment :
            workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
       - persist_to_workspace:
@@ -388,6 +404,32 @@ jobs:
       # Here's where you will add some code to rollback on failure  
 
 
+   cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Get old stack workflow id
+          command: |
+            export OldWorkflowID=$( aws cloudformation list-exports \
+            --query "Exports[?Name==\`WorkflowID\`].Value" \
+             --no-paginate --output text )
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+              
+            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text) 
+            echo Stack names: "${STACKS[@]}"  
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+            else
+              echo ------------ Cannot cleanup stacks --------------
+            fi
+
 workflows:
   default:
     jobs: 
@@ -413,7 +455,7 @@ workflows:
              - "scan-backend"
            filters:
             branches:
-              only: [test-feature-branch]  
+              only: [master]  
       - configure-infrastructure:
            requires: [deploy-infrastructure]
       - run-migrations :
@@ -426,10 +468,9 @@ workflows:
           requires:
             - "deploy-backend"
             - "deploy-frontend"
-
-
-            
-      #- cloudfront-update:
-      #     requires:
-      #       - "smoke-test"
-           
+      - cloudfront-update:
+          requires:
+            - "smoke-test"
+      - cleanup:
+          requires: [cloudfront-update]
+   
