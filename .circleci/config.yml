@@ -446,7 +446,7 @@ jobs:
 
            echo $( aws cloudformation list-exports )
             # your code here
-            export OldWorkflowID=$(aws cloudformation list-exports \
+            export OldWorkflowID= $(aws cloudformation list-exports \
               --query "Exports[?Name==\`Cloudfront-${CIRCLE_WORKFLOW_ID:0:7}\`].Value" \
               --no-paginate --output text)
             echo OldWorkflowID: "${OldWorkflowID}"
