@@ -239,12 +239,6 @@ jobs:
        - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run :
-          name: clear previous migration
-          command: |
-               cd ~/project/backend
-               npm install
-               npm run migrations:revert
       - run:
           name: Run migrations
           command: |
