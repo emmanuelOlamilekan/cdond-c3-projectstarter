@@ -410,7 +410,7 @@ jobs:
           command: |
              export OldWorkflowID=$( aws cloudformation list-exports \
              --query "Exports[?Name==\`WorkflowID\`].Value" \
-             --no-paginate --output text)ß
+             --no-paginate --output text)
               echo Old Workflow ID: $OldWorkflowID
               curl -k https://kvdb.io/97QsLbgGJHNFFfzHTJ3cD/old_workflow_id -d "${OldWorkflowID}"
              
@@ -441,10 +441,10 @@ jobs:
             echo Stack names: "${STACKS[@]}"  
 
             echo I am here
-            
+
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
-              echo I am here
+              echo I inside
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
