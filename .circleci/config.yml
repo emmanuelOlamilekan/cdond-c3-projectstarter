@@ -440,6 +440,8 @@ jobs:
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text) 
             echo Stack names: "${STACKS[@]}"  
 
+            echo I am here
+            
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               echo I am here
