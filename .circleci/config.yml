@@ -36,6 +36,7 @@ commands:
                 npm run migration:revert
               fi  
   
+  
   install_nodejs:
     description: Install Node.js 13.8.0
     steps:
@@ -238,6 +239,12 @@ jobs:
        - image: circleci/node:13.8.0
     steps:
       - checkout
+      - run :
+          name: clear previous migration
+          command: |
+               cd ~/project/backend
+               npm install
+               npm run migration:revert
       - run:
           name: Run migrations
           command: |
@@ -257,7 +264,7 @@ jobs:
               else
                   echo "No migrations are pending" 
              fi 
-              
+
 
    build-frontend-test:
     docker:
